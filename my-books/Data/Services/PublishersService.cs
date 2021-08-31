@@ -24,5 +24,20 @@ namespace my_books.Data.Services
 			_context.Publishers.Add(_publisher);
 			_context.SaveChanges();
 		}
+
+		public PublisherWithBooksAndAuthorVM GetPublisherData(int publisherid)
+		{
+			var _publisherData = _context.Publishers.Where(n => n.Id == publisherid).Select(n => new PublisherWithBooksAndAuthorVM()
+			{
+				Name = n.Name,
+				BookAuthors = n.Books.Select(n => new BookAuthorVM()
+				{
+					BookName = n.Title,
+					BookAuthors = n.Book_Authors.Select(n => n.Author.Name).ToList()
+				}).ToList()
+			}).FirstOrDefault();
+
+			return _publisherData;
+		}
 	}
 }
