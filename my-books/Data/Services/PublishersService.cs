@@ -40,6 +40,9 @@ namespace my_books.Data.Services
 			return _publisherData;
 		}
 
+		public Publisher GetPublisherById(int id) => _context.Publishers.FirstOrDefault(n => n.Id == id);
+		
+
 		public  void DeletePublisherById(int id)
 		{
 			var _publisher = _context.Publishers.FirstOrDefault(n => n.Id == id);
