@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using my_books.Data.Models;
+using my_books.Data.Paging;
 using my_books.Data.ViewModels;
 
 namespace my_books.Data.Services
@@ -14,6 +15,35 @@ namespace my_books.Data.Services
 		{
 			_context = context;
 		}
+
+		public List<Publisher> GetAllPublshers(string sortBy, string searchString, int? pgNumber)
+		{
+			var allPublishers = _context.Publishers.OrderBy(n => n.Name).ToList();
+
+			if (!string.IsNullOrEmpty(sortBy))
+			{
+				switch (sortBy)
+				{
+					case "desc":
+						allPublishers = allPublishers.OrderByDescending(n => n.Name).ToList();
+						break;
+
+					default:
+						break;
+				}
+			}
+
+			if (!string.IsNullOrEmpty(searchString))
+			{
+				allPublishers = allPublishers.Where(n => n.Name.Contains(searchString)).ToList();
+			}
+
+			// paging
+			int pageSize = 5;
+			allPublishers = PaginatedList<Publisher>.Create(allPublishers.AsQueryable(), pgNumber ?? 1, pageSize);
+			
+				return allPublishers;
+		} 
 
 		public void AddPublisher(PublisherVM publisher)
 		{
